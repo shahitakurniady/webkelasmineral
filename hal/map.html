@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Metadata -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+    <meta name="mobile-web-app-capable" content="yes"> 
+    <meta name="apple-mobile-web-app-capable" content="yes"> 
+    <meta name="author" content="SHAHITA"> 
+    <meta name="description" content="leaflet basic">
+    <!-- Judul pada tab browser -->
+    <title>WEBMAP MINERAL</title>
+    <!-- Leaflet CSS Library -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css">
+    <!--Geolocation CSS Library for Plugin-->
+    <link rel = "stylesheet" href="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.css">
+    <!--Font Awesome CSS Library-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
+    <!-- Tab browser icon -->
+    <link rel="icon" type="image/x-icon" href="simbol/kelmin.jpg">
+    <!-- minimap Plugins -->
+	<link rel="stylesheet" href="dist/Control.MiniMap.min.css" />
+    <!-- minimap Plugins -->
+    <link rel="stylesheet" href="lib/leaflet-measure.css">
+	
+    <style>
+        /* Tampilan peta fullscreen */
+        html,
+        body,
+        #map {
+            height: 100%;
+            width: 100%;
+            margin: 0px;
+        }
+
+        /*Background pada Judul */
+        *.info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: rgba(255,255,255,0.8);
+            box-shadow:0 0 15px rgba(0,0,0,0.2);
+            border-radius: 5px;
+            text-align: center;
+        }
+        *.info h2 {
+            margin: 0 0 5px;
+            color: #777;
+        }
+/* Navbar container */
+.navbar {
+  overflow: hidden;
+  background-color: yellow;
+  font-family: Arial;
+}
+
+/* Links inside the navbar */
+.navbar a {
+  float: left;
+  font-size: 16px;
+  color: black;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* The dropdown container */
+.dropdown {
+  float: left;
+  overflow: hidden;
+}
+
+/* Dropdown button */
+.dropdown .dropbtn {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit; /* Important for vertical align on mobile phones */
+  margin: 0; /* Important for vertical align on mobile phones */
+}
+
+/* Add a red background color to navbar links on hover */
+.navbar a:hover, .dropdown:hover .dropbtn {
+  background-color: wheat;
+}
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+
+/* iMAGE */
+.row > .column {
+  padding: 0 8px;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Create four equal columns that floats next to eachother */
+.column {
+  float: left;
+  width: 18%;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: black;
+}
+
+/* Modal Content */
+.modal-content {
+  position: relative;
+  background-color: #fefefe;
+  margin: auto;
+  padding: 0;
+  width: 30%;
+  max-width: 250px;
+}
+
+/* The Close Button */
+.close {
+  color: white;
+  position: absolute;
+  top: 10px;
+  right: 25px;
+  font-size: 35px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #999;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Hide the slides by default */
+.mySlides {
+  display: none;
+}
+
+/* Next & previous buttons */
+.prev,
+.next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  padding: 16px;
+  margin-top: -50px;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover,
+.next:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Number text (1/3 etc) */
+.numbertext {
+  color: #f2f2f2;
+  font-size: 12px;
+  padding: 8px 12px;
+  position: absolute;
+  top: 0;
+}
+
+/* Caption text */
+.caption-container {
+  text-align: center;
+  background-color: black;
+  padding: 2px 16px;
+  color: white;
+}
+
+img.demo {
+  opacity: 0.6;
+}
+
+.active,
+.demo:hover {
+  opacity: 1;
+}
+
+img.hover-shadow {
+  transition: 0.3s;
+}
+
+.hover-shadow:hover {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="halutama.html">BERANDA</a>
+        <a href="kelas.html">KLASIFIKASI MINERAL</a>
+        <a href="amethyst.html">INFORMASI AMETHYS</a>
+        <a href="intan.html">INFORMASI INTAN</a>
+        <a href="kalsit.html">INFORMASI KALSIT</a>
+        <a href="kwarsa.html">INFORMASI KWARSA</a>
+        <a href="opal.html">INFORMASI OPAL</a>
+        </div>
+      <script>
+        /* When the user clicks on the button, 
+        toggle between hiding and showing the dropdown content */
+        function myFunction() {
+          document.getElementById("myDropdown").classList.toggle("show");
+        }
+        
+        // Close the dropdown if the user clicks outside of it
+        window.onclick = function(e) {
+          if (!e.target.matches('.dropbtn')) {
+          var myDropdown = document.getElementById("myDropdown");
+            if (myDropdown.classList.contains('show')) {
+              myDropdown.classList.remove('show');
+            }
+          }
+        }
+        </script>
+
+        <!-- Images used to open the lightbox -->
+<div class="row">
+    <div class="column">
+      <img src="simbol/legame.jpg" onclick="openModal();currentSlide(1)" class="hover-shadow">
+    </div>
+    <div class="column">
+      <img src="simbol/legin.png" onclick="openModal();currentSlide(2)" class="hover-shadow">
+    </div>
+    <div class="column">
+      <img src="simbol/legkal.png" onclick="openModal();currentSlide(3)" class="hover-shadow">
+    </div>
+    <div class="column">
+      <img src="simbol/legkwarr.png" onclick="openModal();currentSlide(4)" class="hover-shadow">
+    </div>
+    <div class="column">
+        <img src="simbol/legop.png" onclick="openModal();currentSlide(5)" class="hover-shadow">
+      </div>
+  </div>
+  
+  <!-- The Modal/Lightbox -->
+  <div id="myModal" class="modal">
+    <span class="close cursor" onclick="closeModal()">&times;</span>
+    <div class="modal-content">
+  
+      <div class="mySlides">
+        <div class="numbertext">1 / 5</div>
+        <img src="aset/images/ini.png" style="width:100%">
+      </div>
+  
+      <div class="mySlides">
+        <div class="numbertext">2 / 5</div>
+        <img src="aset/images/bro.png" style="width:100%">
+      </div>
+  
+      <div class="mySlides">
+        <div class="numbertext">3 / 5</div>
+        <img src="aset/images/iki.png" style="width:100%">
+      </div>
+  
+      <div class="mySlides">
+        <div class="numbertext">4 / 5</div>
+        <img src="aset/images/cik.png" style="width:100%">
+      </div>
+
+      <div class="mySlides">
+        <div class="numbertext">5 / 5</div>
+        <img src="aset/images/yok.png" style="width:100%">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Open the Modal
+    function openModal() {
+      document.getElementById("myModal").style.display = "block";
+    }
+    
+    // Close the Modal
+    function closeModal() {
+      document.getElementById("myModal").style.display = "none";
+    }
+    
+    var slideIndex = 1;
+    showSlides(slideIndex);
+    
+    // Next/previous controls
+    function plusSlides(n) {
+      showSlides(slideIndex += n);
+    }
+    
+    // Thumbnail image controls
+    function currentSlide(n) {
+      showSlides(slideIndex = n);
+    }
+    
+    function showSlides(n) {
+      var i;
+      var slides = document.getElementsByClassName("mySlides");
+      var dots = document.getElementsByClassName("demo");
+      var captionText = document.getElementById("caption");
+      if (n > slides.length) {slideIndex = 1}
+      if (n < 1) {slideIndex = slides.length}
+      for (i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+      }
+      for (i = 0; i < dots.length; i++) {
+        dots[i].className = dots[i].className.replace(" active", "");
+      }
+      slides[slideIndex-1].style.display = "block";
+      dots[slideIndex-1].className += " active";
+      captionText.innerHTML = dots[slideIndex-1].alt;
+    }
+    </script>
+
+    <!-- Leaflet JavaScript Library -->
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+
+    <!--untuk menampilkan file dalam format geojson-->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+    <!--Geolocation Javascript Library for Plugin-->
+    <script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.min.js"></script>
+
+    <!--Search CSS Library for Plugin-->
+    <link rel="stylesheet" href="aset/plugins/leaflet-search/leaflet-search.css">
+
+    <!--Search Javascript Library for Plugin-->
+    <script src="aset/plugins/leaflet-search/leaflet-search.js"></script>
+
+     <!--minimap for Plugin-->
+    <script src="dist/Control.MiniMap.min.js" type="text/javascript"></script>
+
+    <!--minimap for Plugin-->
+    <script src="lib/leaflet-measure.js"></script>
+
+    <div id="map"></div>
+    
+    <script>
+        /* Initial Map */
+        var map = L.map('map', {
+            measureControl: true
+        }).setView([-1.850253, 118.876685], 5); //lat, long, zoom
+
+        /* Judul dan Subjudul 
+        var title = new L.Control();
+        title.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info');
+            this.update();
+            return this._div;
+        };
+        title.update = function () {
+            this._div.innerHTML = '<h1>WEBGIS MINERAL</h1>Sebaran Lokasi Potensial Mineral Batuan di Indonesia<h3>Dibuat Oleh: Shahita Kurniady</h3>'
+        };
+        title.addTo(map); */
+
+        /* Image Logo */
+        L.Control.kelmin = L.Control.extend({
+             onAdd: function(map) {
+                 var img = L.DomUtil.create('img');
+                 img.src = 'simbol/webmaps.png';
+                 img.style.width = '300px';
+                 return img;
+             }
+         });
+
+         L.control.kelmin = function(opts) {
+             return new L.Control.kelmin(opts);
+         }
+         L.control.kelmin({position: 'topright'}).addTo(map);
+
+
+        /* Tile Basemap */ 
+        var basemap1 = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { 
+            attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | <a href="SIG_UGM" t arget="_blank">SHAHITA</a>' //menambahkan nama//
+        });
+        var basemap2= L.tileLayer(
+            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { 
+                attribution: 'Tiles &copy; Esri | <a href="http://www.unsorry.net" target="_blank">SHAHITA</a>'
+            });
+        var basemap3= L.tileLayer(
+            'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', { 
+                attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+            });
+        var basemap4= L.tileLayer(
+            'https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', { 
+	            attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
+            });
+            
+        basemap3.addTo(map);
+
+        /* GeoJSON Point 01 */
+        var wfsgeoserver = L.geoJson(null, {
+            pointToLayer:function (feature, latlng) {
+                return L.marker(latlng, {
+                    icon:L.icon({
+                        iconUrl:"simbol/simame.png", //URL icon marker
+                        iconSize: [32, 32], //ukuran icon marker
+                        iconAnchor: [16, 32], //icon marker offset
+                        popupAnchor: [0, -32], //popup offset
+                        tooltipAnchor: [16, -20] //tooltip offset
+                    })
+                });
+            },
+            onEachFeature: function (feature, layer) {
+                /* Variabel content untuk memanggil atribut dari data file geoJson */
+                var content = "No Lokasi :" + feature.properties.No_Lokasi + "<br>" +
+                "Kode Unsur :" + feature.properties.Kode_Unsur + "<br>" +
+                "Kelompok Komoditas :" + feature.properties.Klmpk_komo + "<br>" +
+                "Lokasi :" + feature.properties.Lokasi + "<br>" +
+                "Hipotetik :" + feature.properties.Hipotetik + "<br>" +
+                "Tereka :" + feature.properties.Tereka + "<br>" +
+                "Terukur :" + feature.properties.Terukur + "<br>" +
+                "Terkira :" + feature.properties.Terkira + "<br>" +
+                "Terbukti :" + feature.properties.Terbukti + "<br>" +
+                "Catatan :" + feature.properties.Catatan + "<br>" +
+                "Tingkat Penyelidikan :" + feature.properties.Tkt_penyel + "<br>" +
+                "Sumber Data :" + feature.properties.Sumbr_data + "<br>" +               
+                feature.properties.LOGO;
+
+                layer.on({
+                    click: function (e) {//Fungsi ketika icon simbol di-klik
+                    wfsgeoserver.bindPopup(content);
+                    },
+
+                    mouseover: function(e) {
+                        wfsgeoserver.bindTooltip(feature.properties.Lokasi);
+                    },
+
+                    mouseout: function(e) {
+                        wfsgeoserver.closePopup();
+                    }
+                });
+            }
+        }); 
+    
+        /* memanggil data file geoJson point */
+        $.getJSON("geo/amethyst_geo.geojson", function (data) {
+            wfsgeoserver.addData(data);
+            //map.addLayer(wfsgeoserver);
+            //map.fitBounds(wfsgeoserver.getBounds()); pakai start geoserver
+        });
+
+        /* GeoJSON Point 02 */
+        var wfsgeoserverr = L.geoJson(null, {
+            pointToLayer:function (feature, latlng) {
+                return L.marker(latlng, {
+                    icon:L.icon({
+                        iconUrl:"simbol/simin.png", //URL icon marker
+                        iconSize: [32, 32], //ukuran icon marker
+                        iconAnchor: [16, 32], //icon marker offset
+                        popupAnchor: [0, -32], //popup offset
+                        tooltipAnchor: [16, -20] //tooltip offset
+                    })
+                });
+            },
+            onEachFeature: function (feature, layer) {
+                /* Variabel content untuk memanggil atribut dari data file geoJson */
+                var content = "No Lokasi :" + feature.properties.No_Lokasi + "<br>" +
+                "Kode Unsur :" + feature.properties.Kode_Unsur + "<br>" +
+                "Kelompok Komoditas :" + feature.properties.Klmpk_komo + "<br>" +
+                "Lokasi :" + feature.properties.Lokasi + "<br>" +
+                "Hipotetik :" + feature.properties.Hipotetik + "<br>" +
+                "Tereka :" + feature.properties.Tereka + "<br>" +
+                "Terukur :" + feature.properties.Terukur + "<br>" +
+                "Terkira :" + feature.properties.Terkira + "<br>" +
+                "Terbukti :" + feature.properties.Terbukti + "<br>" +
+                "Catatan :" + feature.properties.Catatan + "<br>" +
+                "Tingkat Penyelidikan :" + feature.properties.Tkt_penyel + "<br>" +
+                "Sumber Data :" + feature.properties.Sumbr_data + "<br>" +               
+                feature.properties.LOGO;
+
+                layer.on({
+                    click: function (e) {//Fungsi ketika icon simbol di-klik
+                    wfsgeoserverr.bindPopup(content);
+                    },
+
+                    mouseover: function(e) {
+                        wfsgeoserverr.bindTooltip(feature.properties.Lokasi);
+                    },
+
+                    mouseout: function(e) {
+                        wfsgeoserverr.closePopup();
+                    }
+                });
+            }
+        }); 
+        
+        /* memanggil data file geoJson point */
+        $.getJSON("geo/intan_geo.geojson", function (data) {
+            wfsgeoserverr.addData(data);
+            //map.addLayer(wfsgeoserver);
+            //map.fitBounds(wfsgeoserver.getBounds()); pakai start geoserver
+        });
+
+        /* GeoJSON Point 03 */
+        var wfsgeoserverrr = L.geoJson(null, {
+            pointToLayer:function (feature, latlng) {
+                return L.marker(latlng, {
+                    icon:L.icon({
+                        iconUrl:"simbol/simkal.png", //URL icon marker
+                        iconSize: [32, 32], //ukuran icon marker
+                        iconAnchor: [16, 32], //icon marker offset
+                        popupAnchor: [0, -32], //popup offset
+                        tooltipAnchor: [16, -20] //tooltip offset
+                    })
+                });
+            },
+            onEachFeature: function (feature, layer) {
+                /* Variabel content untuk memanggil atribut dari data file geoJson */
+                var content = "No Lokasi :" + feature.properties.No_Lokasi + "<br>" +
+                "Kode Unsur :" + feature.properties.Kode_Unsur + "<br>" +
+                "Kelompok Komoditas :" + feature.properties.Klmpk_komo + "<br>" +
+                "Lokasi :" + feature.properties.Lokasi + "<br>" +
+                "Hipotetik :" + feature.properties.Hipotetik + "<br>" +
+                "Tereka :" + feature.properties.Tereka + "<br>" +
+                "Terukur :" + feature.properties.Terukur + "<br>" +
+                "Terkira :" + feature.properties.Terkira + "<br>" +
+                "Terbukti :" + feature.properties.Terbukti + "<br>" +
+                "Catatan :" + feature.properties.Catatan + "<br>" +
+                "Tingkat Penyelidikan :" + feature.properties.Tkt_penyel + "<br>" +
+                "Sumber Data :" + feature.properties.Sumbr_data + "<br>" +               
+                feature.properties.LOGO;
+
+                layer.on({
+                    click: function (e) {//Fungsi ketika icon simbol di-klik
+                    wfsgeoserverrr.bindPopup(content);
+                    },
+
+                    mouseover: function(e) {
+                        wfsgeoserverrr.bindTooltip(feature.properties.Lokasi);
+                    },
+
+                    mouseout: function(e) {
+                        wfsgeoserverrr.closePopup();
+                    }
+                });
+            }
+        });
+        /* memanggil data file geoJson point */
+        $.getJSON("geo/kalsit_geo.geojson", function (data) {
+            wfsgeoserverrr.addData(data);
+            //map.addLayer(wfsgeoserver);
+            //map.fitBounds(wfsgeoserver.getBounds()); pakai start geoserver
+        });
+
+        /* GeoJSON Point 04 */
+        var wfsgeoserverrrr = L.geoJson(null, {
+            pointToLayer:function (feature, latlng) {
+                return L.marker(latlng, {
+                    icon:L.icon({
+                        iconUrl:"simbol/simkwa.png", //URL icon marker
+                        iconSize: [32, 32], //ukuran icon marker
+                        iconAnchor: [16, 32], //icon marker offset
+                        popupAnchor: [0, -32], //popup offset
+                        tooltipAnchor: [16, -20] //tooltip offset
+                    })
+                });
+            },
+            onEachFeature: function (feature, layer) {
+                /* Variabel content untuk memanggil atribut dari data file geoJson */
+                var content = "No Lokasi :" + feature.properties.No_Lokasi + "<br>" +
+                "Kode Unsur :" + feature.properties.Kode_Unsur + "<br>" +
+                "Kelompok Komoditas :" + feature.properties.Klmpk_komo + "<br>" +
+                "Lokasi :" + feature.properties.Lokasi + "<br>" +
+                "Hipotetik :" + feature.properties.Hipotetik + "<br>" +
+                "Tereka :" + feature.properties.Tereka + "<br>" +
+                "Terukur :" + feature.properties.Terukur + "<br>" +
+                "Terkira :" + feature.properties.Terkira + "<br>" +
+                "Terbukti :" + feature.properties.Terbukti + "<br>" +
+                "Catatan :" + feature.properties.Catatan + "<br>" +
+                "Tingkat Penyelidikan :" + feature.properties.Tkt_penyel + "<br>" +
+                "Sumber Data :" + feature.properties.Sumbr_data + "<br>"+
+                feature.properties.LOGO;
+
+                layer.on({
+                    click: function (e) {//Fungsi ketika icon simbol di-klik
+                    wfsgeoserverrrr.bindPopup(content);
+                    },
+
+                    mouseover: function(e) {
+                        wfsgeoserverrrr.bindTooltip(feature.properties.Lokasi);
+                    },
+
+                    mouseout: function(e) {
+                        wfsgeoserverrrr.closePopup();
+                    }
+                });
+            }
+        });
+        /* memanggil data file geoJson point */
+        $.getJSON("geo/kwarsa_geo.geojson", function (data) {
+            wfsgeoserverrrr.addData(data);
+            //map.addLayer(wfsgeoserver);
+            //map.fitBounds(wfsgeoserver.getBounds()); pakai start geoserver
+        });
+
+        /* GeoJSON Point 05 */
+        var wfsgeoserverrrrr = L.geoJson(null, {
+            pointToLayer:function (feature, latlng) {
+                return L.marker(latlng, {
+                    icon:L.icon({
+                        iconUrl:"simbol/simop.png", //URL icon marker
+                        iconSize: [32, 32], //ukuran icon marker
+                        iconAnchor: [16, 32], //icon marker offset
+                        popupAnchor: [0, -32], //popup offset
+                        tooltipAnchor: [16, -20] //tooltip offset
+                    })
+                });
+            },
+            onEachFeature: function (feature, layer) {
+                /* Variabel content untuk memanggil atribut dari data file geoJson */
+                var content = "No Lokasi :" + feature.properties.No_Lokasi + "<br>" +
+                "Kode Unsur :" + feature.properties.Kode_Unsur + "<br>" +
+                "Kelompok Komoditas :" + feature.properties.Klmpk_komo + "<br>" +
+                "Lokasi :" + feature.properties.Lokasi + "<br>" +
+                "Hipotetik :" + feature.properties.Hipotetik + "<br>" +
+                "Tereka :" + feature.properties.Tereka + "<br>" +
+                "Terukur :" + feature.properties.Terukur + "<br>" +
+                "Terkira :" + feature.properties.Terkira + "<br>" +
+                "Terbukti :" + feature.properties.Terbukti + "<br>" +
+                "Catatan :" + feature.properties.Catatan + "<br>" +
+                "Tingkat Penyelidikan :" + feature.properties.Tkt_penyel + "<br>" +
+                "Sumber Data :" + feature.properties.Sumbr_data + "<br>" +               
+                feature.properties.LOGO;
+
+                layer.on({
+                    click: function (e) {//Fungsi ketika icon simbol di-klik
+                    wfsgeoserverrrrr.bindPopup(content);
+                    },
+
+                    mouseover: function(e) {
+                        wfsgeoserverrrrr.bindTooltip(feature.properties.Lokasi);
+                    },
+
+                    mouseout: function(e) {
+                        wfsgeoserverrrrr.closePopup();
+                    }
+                });
+            }
+        });
+        /* memanggil data file geoJson point */
+        $.getJSON("geo/opal_geo.geojson", function (data) {
+            wfsgeoserverrrrr.addData(data);
+            //map.addLayer(wfsgeoserver);
+            //map.fitBounds(wfsgeoserver.getBounds()); pakai start geoserver
+        });
+
+//       /* Layer Marker */
+//    var marker1 = L.marker([5.145000, 95.625000], { 
+//             draggable: true 
+//         });
+//         marker1.addTo(map);
+//         marker1.bindPopup("Seulawah Asam"); 
+
+//         var marker2 = L.marker([-3.583000,128.347000]); 
+//         marker2.addTo(map);
+//         marker2.bindPopup("Tulehu"); 
+
+//         var marker3 = L.marker([-6.799000,107.594000]); 
+//         marker3.addTo(map);
+//         marker3.bindPopup("Tangkuban Perahu"); */
+
+
+        /* Control Layer */ 
+        var baseMaps = {
+            "OpenStreetMap": basemap1,
+            "Esri World Street": basemap2,
+            "Stadia Dark Mode": basemap3,
+            "Natgeo World Map": basemap4
+        };
+        var overlayMaps = {
+            "Amethyst": wfsgeoserver,
+            "Intan": wfsgeoserverr,
+            "Kalsit": wfsgeoserverrr,
+            "Kwarsa": wfsgeoserverrrr,
+            "Opal": wfsgeoserverrrrr 
+        };
+        L.control.layers(baseMaps, overlayMaps, { 
+            collapsed: true
+        }).addTo(map);
+
+        /* Scale Bar */
+        L.control.scale({ 
+            maxWidth: 150,
+            position: 'bottomright'
+        }).addTo(map);
+
+
+        /* Plugin Geolocation */ //menambahkan plugin geolocation
+        var locateControl = L.control.locate({
+            position: "topleft", //posisi plugin
+            drawCircle: true,
+            follow: true,
+            setView: true, 
+            keepCurrentZoomLevel: false,
+            markerStyle: {
+                weight:1, //ukuran
+                opacity: 0.8, //transparansi
+                fillOpacity: 0.8,
+            },
+            circleStyle: {
+                weight: 1,
+                clickable: false,
+            },
+            icon: "fas fa-crosshairs",
+            metric: true,
+            strings: {
+                title: "Click for Your Location", //popup yang muncul
+                popup: "You're here. Accuracy {distance} {unit}", //message menampilkan akurasi
+                outsideMapBoundsMsg: "Not available"
+            },
+            locateOptions: {
+                maxZoom: 16, //perbesaran maksimal 16x
+                watch: true,
+                enableHighAccuracy: true,
+                maximumAge: 10000,
+                timeout: 10000
+            },
+        }).addTo(map);
+
+        /* Image Logo */
+        L.Control.kelmin = L.Control.extend({
+             onAdd: function(map) {
+                 var img = L.DomUtil.create('img');
+                 img.src = 'simbol/kelmin.jpg';
+                 img.style.width = '150px';
+                 return img;
+             }
+         });
+
+         L.control.kelmin = function(opts) {
+             return new L.Control.kelmin(opts);
+         }
+         L.control.kelmin({position: 'bottomleft'}).addTo(map);
+
+
+        //minimap
+        var osmUrl='//server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+		var osmAttrib='&copy; Esri &mdash; Sources: Esri, DigitalGlobe, Earthstar Geographics, CNES/Airbus DS, GeoEye, USDA FSA, USGS, Getmapping, Aerogrid, IGN, IGP, swisstopo, and the GIS User Community';
+		
+		//Plugin magic goes here! Note that you cannot use the same layer object again, as that will confuse the two map controls
+		var osm2 = new L.TileLayer(osmUrl, {minZoom: 0, maxZoom: 13, attribution: osmAttrib });
+		var miniMap = new L.Control.MiniMap(osm2, { toggleDisplay: true }).addTo(map);
+
+         /* Plugin Search *///menambahkan plugin search
+         var searchControl = new L.Control.Search({
+            position: "topleft",
+            layer: wfsgeoserverrrr,
+            propertyName: 'Lokasi',
+            marker: true,
+            moveToLocation: function(latlng, title, map) {
+                var zoom = map.getBoundsZoom(latlng.layer.getBounds());
+                map.setView(latlng, zoom);
+            }
+        });
+        searchControl.on('search:locationfound', function(e) {
+            e.layer.setStyle({
+                fillColor: '#ffff00',
+                color: '#0000ff'
+            });
+        }).on('search:collapsed', function(e) {
+            featuresLayer.eachLayer(function(layer) {
+                featuresLayer.resetStyle(layer);
+            });
+        });
+        map.addControl(searchControl);
+
+        /*measure*/
+        var measureControl = new L.Control.Measure({
+        position: 'topright',
+        primaryLengthUnit: 'feet',
+        secondaryLengthUnit: 'miles'
+    });
+    measureControl.addTo(map);
+
+
+    </script>
+</body>
+</html>
